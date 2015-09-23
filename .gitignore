@@ -1,0 +1,8 @@
+vendor/*
+output/*
+.bundle
+Gemfile.lock
+Gemfile.local
+*.log
+ext/packaging
+pkg/*
