@@ -29,16 +29,17 @@ server taking possession of ESX systems).
   proj.replaces "razor-torquebox"
   proj.provides "razor-torquebox"
 
-  proj.user("razor", group: "razor", shell: '/bin/bash', is_system: true, homedir: '/var/lib/razor')
-
   # Directory Structure
   proj.setting(:install_root, "/opt/puppetlabs/server/apps/razor-server")
-  proj.setting(:prefix, proj.install_root)
+  proj.setting(:prefix, File.join(proj.install_root, "share", "razor-server"))
   proj.setting(:torquebox_prefix, File.join(proj.install_root, "share", "torquebox"))
   proj.setting(:sysconfdir, "/etc/puppetlabs/razor-server")
   proj.setting(:logdir, "/var/log/puppetlabs/razor-server")
   proj.setting(:rundir, "/var/run/puppetlabs/razor-server")
+  proj.setting(:server_bindir, "/opt/puppetlabs/server/bin")
+  proj.setting(:agent_bindir, "/opt/puppetlabs/bin")
 
+  proj.user("razor", group: "razor", shell: '/bin/bash', is_system: true, homedir: "#{proj.install_root}/var/razor")
 
   proj.directory proj.prefix
   proj.directory proj.torquebox_prefix

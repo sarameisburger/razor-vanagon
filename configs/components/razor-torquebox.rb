@@ -2,20 +2,26 @@ component "razor-torquebox" do |pkg, settings, platform|
   pkg.version "3.1.1"
   pkg.md5sum "f66d730f6fd480cb79e5470db61950b0"
   pkg.url "http://buildsources.delivery.puppetlabs.net/torquebox-#{pkg.get_version}.tar.gz"
-  pkg.add_source "file://files/razor-torquebox.sh", sum: 'b0c34243002a691ee2179e749de59ae4'
-  pkg.add_source "file://files/standalone.xml", sum: '6b0a5e1a7fe63407de03a8ee1bba43f8'
+  pkg.add_source "file://resources/files/razor-torquebox.sh", sum: 'b0c34243002a691ee2179e749de59ae4'
+  pkg.add_source "file://resources/files/standalone.xml", sum: '6b0a5e1a7fe63407de03a8ee1bba43f8'
+
+  #pkg.apply_patch "resources/patches/0001-PATCH-Update-rubygems-to-2.4.8-CVE-2015-4020.patch"
 
   pkg.install do
     [
        "mv * #{settings[:torquebox_prefix]}/",
        "rm -rf #{settings[:torquebox_prefix]}/jruby/lib/ruby/gems/shared/gems/builder-3.0.0/TAGS",
        "rm -rf #{settings[:torquebox_prefix]}/jruby/lib/ruby/gems/shared/gems/thor-0.19.1/spec",
-       "rm -rf #{settings[:torquebox_prefix]}/jruby/lib/jni/{arm-Linux,Darwin,i386-SunOS,i386-Windows,ppc-AIX,sparcv9-SunOS,x86_64-FreeBSD,x86_64-SunOS,x86_64-Windows}",
+       "sed -i 's,#!\/usr\/bin\/env\s*jruby,#!#{settings[:install_root]}/bin/jruby,g' #{settings[:torquebox_prefix]}/jruby/bin/*",
+       %Q{sed -i '/^require .*rubygems.*$$/ a \ENV["JBOSS_HOME"] = "#{settings[:torquebox_prefix]}/jboss"' #{settings[:torquebox_prefix]}/jruby/bin/torquebox},
     ]
   end
 
   pkg.install_configfile "../razor-torquebox.sh", "#{settings[:sysconfdir]}/razor-torquebox.sh"
   pkg.install_configfile "../standalone.xml", "#{settings[:torquebox_prefix]}/jboss/standalone/configuration/standalone.xml"
+
+  pkg.link "#{settings[:torquebox_prefix]}/jruby/bin/jruby", "#{settings[:install_root]}/bin/jruby"
+  pkg.link "#{settings[:torquebox_prefix]}/jruby/bin/torquebox", "#{settings[:install_root]}/sbin/torquebox"
 
   pkg.add_postinstall_action ['install', 'upgrade'],
     [
