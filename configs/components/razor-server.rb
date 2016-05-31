@@ -9,9 +9,6 @@ component "razor-server" do |pkg, settings, platform|
     pkg.requires "libarchive-dev"
   end
 
-  pkg.directory File.join(settings[:install_root], "var", "razor")
-  pkg.directory File.join(settings[:install_root], "repo")
-
   java_home = ""
   javacmd = ""
   case platform.name
@@ -29,7 +26,9 @@ component "razor-server" do |pkg, settings, platform|
   end
   jruby = "#{java_home} #{javacmd} #{settings[:torquebox_prefix]}/jruby/bin/jruby -S"
 
-  pkg.directory settings[:rundir], owner: 'razor', group: 'razor'
+  pkg.directory File.join(settings[:install_root], "var", "razor")
+  pkg.directory File.join(settings[:install_root], "repo")
+
   case platform.servicetype
   when "systemd"
     pkg.install_service "ext/redhat/razor-server.service"
@@ -40,10 +39,9 @@ component "razor-server" do |pkg, settings, platform|
   else
     fail "need to know where to put service files"
   end
-
+  pkg.install_configfile "ext/razor-server.sysconfig", "/etc/sysconfig/razor-server"
   pkg.install_configfile "config.yaml.sample", "#{settings[:sysconfdir]}/config.yaml"
   pkg.install_configfile "shiro.ini", "#{settings[:sysconfdir]}/shiro.ini"
-  pkg.install_configfile "ext/razor-server.sysconfig", "/etc/sysconfig/razor-server"
 
   pkg.configure do
     [
@@ -70,16 +68,11 @@ component "razor-server" do |pkg, settings, platform|
 
   pkg.add_postinstall_action ['install', 'upgrade'],
     [
-    "/bin/chown -R razor:razor #{settings[:install_root]}/repo || :",
-    "/bin/chown -R razor:razor #{settings[:logdir]} || :"
-    ]
-
-  if platform.servicetype == "sysv"
-    pkg.add_postinstall_action ['install', 'upgrade'],
-      [
+      "/bin/chown -R razor:razor #{settings[:install_root]}/var/razor || :",
+      "/bin/chown -R razor:razor #{settings[:install_root]}/repo || :",
+      "/bin/chown -R razor:razor #{settings[:logdir]} || :",
       "/bin/chown -R razor:razor #{settings[:rundir]} || :"
-      ]
-  end
+    ]
 
   pkg.add_postinstall_action ['install'],
     [
@@ -87,11 +80,9 @@ component "razor-server" do |pkg, settings, platform|
       "#{settings[:torquebox_prefix]}/jruby/bin/torquebox deploy #{settings[:prefix]} --env=production"
     ]
 
-
   pkg.add_preremove_action ['upgrade', 'removal'],
     [
     "source #{settings[:sysconfdir]}/razor-torquebox.sh ||:",
     "#{settings[:torquebox_prefix]}/jruby/bin/torquebox undeploy #{settings[:prefix]} ||:"
     ]
-
 end

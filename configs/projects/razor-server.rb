@@ -45,6 +45,7 @@ server taking possession of ESX systems).
   proj.directory proj.torquebox_prefix
   proj.directory proj.sysconfdir
   proj.directory proj.logdir
+  proj.directory proj.rundir
 
   # First our stuff
   proj.component "razor-server"
