@@ -5,8 +5,6 @@ component "razor-torquebox" do |pkg, settings, platform|
   pkg.add_source "file://resources/files/razor-torquebox.sh", sum: 'b0c34243002a691ee2179e749de59ae4'
   pkg.add_source "file://resources/files/standalone.xml", sum: '6b0a5e1a7fe63407de03a8ee1bba43f8'
 
-  #pkg.apply_patch "resources/patches/0001-PATCH-Update-rubygems-to-2.4.8-CVE-2015-4020.patch"
-
   pkg.install do
     [
        "mv * #{settings[:torquebox_prefix]}/",
