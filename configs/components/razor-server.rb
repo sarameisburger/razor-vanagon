@@ -66,6 +66,13 @@ component "razor-server" do |pkg, settings, platform|
   pkg.link "#{settings[:prefix]}/bin/razor-binary-wrapper", "#{settings[:agent_bindir]}/razor-admin"
   pkg.link "#{settings[:prefix]}/bin/razor-binary-wrapper", "#{settings[:server_bindir]}/razor-admin"
 
+  # On upgrade, check to see if these files exist and copy them out of the way to preserve their contents
+  pkg.add_preinstall_action ['upgrade'],
+    [
+      "[[ -e /etc/razor/config.yaml ]] && mkdir -p /tmp/.razor-server.upgrade && cp /etc/razor/config.yaml /tmp/.razor-server.upgrade/config.yaml",
+      "[[ -e /etc/razor/shiro.ini ]] && mkdir -p /tmp/.razor-server.upgrade && cp /etc/razor/shiro.ini /tmp/.razor-server.upgrade/shiro.ini",
+    ]
+
   pkg.add_postinstall_action ['install', 'upgrade'],
     [
       "/bin/chown -R razor:razor #{settings[:install_root]}/var/razor || :",
@@ -78,6 +85,13 @@ component "razor-server" do |pkg, settings, platform|
     [
       "source #{settings[:sysconfdir]}/razor-torquebox.sh",
       "#{settings[:torquebox_prefix]}/jruby/bin/torquebox deploy #{settings[:prefix]} --env=production"
+    ]
+
+  pkg.add_postinstall_action ['upgrade'],
+    [
+      "[[ -e /tmp/.razor-server.upgrade/config.yaml ]] && mv /tmp/.razor-server.upgrade/config.yaml #{settings[:sysconfdir]}/config.yaml",
+      "[[ -e /tmp/.razor-server.upgrade/shiro.ini ]] && mv /tmp/.razor-server.upgrade/shiro.ini #{settings[:sysconfdir]}/shiro.ini",
+      "[[ -e /tmp/.razor-server.upgrade ]] && rm -rf /tmp/.razor-server.upgrade"
     ]
 
   pkg.add_preremove_action ['upgrade', 'removal'],
