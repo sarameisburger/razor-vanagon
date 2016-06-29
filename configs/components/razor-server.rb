@@ -31,9 +31,9 @@ component "razor-server" do |pkg, settings, platform|
 
   case platform.servicetype
   when "systemd"
-    pkg.install_service "ext/redhat/razor-server.service"
-    pkg.install_configfile "ext/redhat/razor-server.env", "#{settings[:prefix]}/razor-server.env"
-    pkg.install_configfile "ext/redhat/razor-server-tmpfiles.conf", "/usr/lib/tmpfiles.d/razor-server.conf"
+    pkg.install_service "ext/razor-server.service"
+    pkg.install_configfile "ext/razor-server.env", "#{settings[:prefix]}/razor-server.env"
+    pkg.install_configfile "ext/razor-server-tmpfiles.conf", "/usr/lib/tmpfiles.d/razor-server.conf"
   when "sysv"
     pkg.install_service "ext/razor-server.init"
   else
