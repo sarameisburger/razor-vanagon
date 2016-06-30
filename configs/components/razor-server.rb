@@ -91,7 +91,7 @@ component "razor-server" do |pkg, settings, platform|
     [
       "[[ -e /tmp/.razor-server.upgrade/config.yaml ]] && mv /tmp/.razor-server.upgrade/config.yaml #{settings[:sysconfdir]}/config.yaml",
       "[[ -e /tmp/.razor-server.upgrade/shiro.ini ]] && mv /tmp/.razor-server.upgrade/shiro.ini #{settings[:sysconfdir]}/shiro.ini",
-      "[[ -e /tmp/.razor-server.upgrade ]] && rm -rf /tmp/.razor-server.upgrade"
+      "[[ -e /tmp/.razor-server.upgrade ]] && rm -rf /tmp/.razor-server.upgrade",
 
       # we need making sure the old config files are removed from the file
       # system. If they were already there, they were moved to the new location
