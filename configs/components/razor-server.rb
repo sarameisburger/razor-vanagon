@@ -1,5 +1,6 @@
 component "razor-server" do |pkg, settings, platform|
   pkg.load_from_json('configs/components/razor-server.json')
+  pkg.add_source "file://resources/files/razorserver.sh", sum: "f5987a68adf3844ca15ba53813ad6f63"
 
   pkg.build_requires "razor-torquebox"
   if platform.is_rpm?
@@ -65,6 +66,8 @@ component "razor-server" do |pkg, settings, platform|
 
   pkg.link "#{settings[:prefix]}/bin/razor-binary-wrapper", "#{settings[:agent_bindir]}/razor-admin"
   pkg.link "#{settings[:prefix]}/bin/razor-binary-wrapper", "#{settings[:server_bindir]}/razor-admin"
+
+  pkg.install_file("../razorserver.sh", "/etc/profile.d/razorserver.sh")
 
   # On upgrade, check to see if these files exist and copy them out of the way to preserve their contents
   pkg.add_preinstall_action ['upgrade'],
