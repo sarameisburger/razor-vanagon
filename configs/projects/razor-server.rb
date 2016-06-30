@@ -31,6 +31,7 @@ server taking possession of ESX systems).
 
   # Directory Structure
   proj.setting(:install_root, "/opt/puppetlabs/server/apps/razor-server")
+  proj.setting(:data_root, "/opt/puppetlabs/server/data/razor-server")
   proj.setting(:prefix, File.join(proj.install_root, "share", "razor-server"))
   proj.setting(:torquebox_prefix, File.join(proj.install_root, "share", "torquebox"))
   proj.setting(:sysconfdir, "/etc/puppetlabs/razor-server")

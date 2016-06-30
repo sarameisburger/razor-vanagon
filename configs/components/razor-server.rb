@@ -27,7 +27,7 @@ component "razor-server" do |pkg, settings, platform|
   jruby = "#{java_home} #{javacmd} #{settings[:torquebox_prefix]}/jruby/bin/jruby -S"
 
   pkg.directory File.join(settings[:install_root], "var", "razor")
-  pkg.directory File.join(settings[:install_root], "repo")
+  pkg.directory File.join(settings[:data_root], "repo")
 
   case platform.servicetype
   when "systemd"
@@ -76,7 +76,7 @@ component "razor-server" do |pkg, settings, platform|
   pkg.add_postinstall_action ['install', 'upgrade'],
     [
       "/bin/chown -R razor:razor #{settings[:install_root]}/var/razor || :",
-      "/bin/chown -R razor:razor #{settings[:install_root]}/repo || :",
+      "/bin/chown -R razor:razor #{settings[:data_root]}/repo || :",
       "/bin/chown -R razor:razor #{settings[:logdir]} || :",
       "/bin/chown -R razor:razor #{settings[:rundir]} || :"
     ]
