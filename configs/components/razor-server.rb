@@ -78,7 +78,7 @@ component "razor-server" do |pkg, settings, platform|
       "/bin/chown -R razor:razor #{settings[:install_root]}/var/razor || :",
       "/bin/chown -R razor:razor #{settings[:install_root]}/repo || :",
       "/bin/chown -R razor:razor #{settings[:logdir]} || :",
-      "/bin/chown -R razor:razor #{settings[:rundir]} || :"
+      "/bin/chown -R razor:razor #{settings[:rundir]} || :",
     ]
 
   pkg.add_postinstall_action ['install'],
@@ -92,6 +92,20 @@ component "razor-server" do |pkg, settings, platform|
       "[[ -e /tmp/.razor-server.upgrade/config.yaml ]] && mv /tmp/.razor-server.upgrade/config.yaml #{settings[:sysconfdir]}/config.yaml",
       "[[ -e /tmp/.razor-server.upgrade/shiro.ini ]] && mv /tmp/.razor-server.upgrade/shiro.ini #{settings[:sysconfdir]}/shiro.ini",
       "[[ -e /tmp/.razor-server.upgrade ]] && rm -rf /tmp/.razor-server.upgrade"
+
+      # we need making sure the old config files are removed from the file
+      # system. If they were already there, they were moved to the new location
+      # and should be removed completely from the old location. This happens
+      # after we've ensured the old files are available in the new location
+      "[[ -e /etc/razor/config.yaml ]] && rm /etc/razor/config.yaml",
+      "[[ -e /etc/razor/shiro.ini ]] && rm /etc/razor/shiro.ini",
+
+      # we have to chown the old repo-store location in case the user is still
+      # using it. The debian packaging removes the razor user for some reason
+      # and this directory loses it's permissions. Since we're not forcing the
+      # user to migrate to the new repo store location, we need to make sure
+      # the razor user still has access to this directory.
+      "[[ -e /var/lib/razor/repo-store ]] && /bin/chown -R razor:razor /var/lib/razor/repo-store",
     ]
 
   pkg.add_preremove_action ['upgrade', 'removal'],
