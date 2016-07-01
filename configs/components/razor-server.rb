@@ -82,6 +82,7 @@ component "razor-server" do |pkg, settings, platform|
       "/bin/chown -R razor:razor #{settings[:data_root]}/repo || :",
       "/bin/chown -R razor:razor #{settings[:logdir]} || :",
       "/bin/chown -R razor:razor #{settings[:rundir]} || :",
+      "source /etc/profile.d/razorserver.sh",
     ]
 
   pkg.add_postinstall_action ['install'],
