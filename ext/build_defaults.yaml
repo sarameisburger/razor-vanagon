@@ -2,7 +2,7 @@
 project: 'razor-server'
 packaging_url: 'git://github.com/puppetlabs/packaging.git --branch=master'
 packaging_repo: 'packaging'
-gpg_key: '4BD6EC30'
+gpg_key: '7F438280EF8D349F'
 sign_tar: FALSE
 vanagon_project: TRUE
 apt_repo_name: 'PC1'
